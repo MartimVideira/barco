@@ -1,0 +1,102 @@
+.app{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap:1em;
+}
+.cell {
+  width: 3em;
+  height: 3em;
+  border: 1px solid black;
+  text-align: center;
+  font-size: medium;
+  font-weight: bold;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.cell[reveal] {
+  transform: rotateY(180deg);
+}
+
+.cell[reveal] div {
+  transition-duration: 1.5s;
+  transform: rotateY(-180deg);
+}
+
+.correct , .key.correct {
+  background-color: green;
+}
+
+.incorrect {
+  background-color:grey;
+}
+
+.partial {
+  background-color: yellow;
+}
+
+.board{
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+.line{ display:flex;  gap:10px;}
+
+
+.keyboard{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.keyboard-line {
+  display: flex;
+  gap:4px
+}
+
+
+.key {
+  width: 3rem;
+  height: 3rem;
+  border-radius:5px;
+  border: 1px solid black;
+  text-align: center;
+  cursor: pointer;
+  display:flex;
+  font-weight: bold;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.1s 1.5s;
+}
+
+
+.key.undefined {
+  background-color: lightgrey;
+}
+
+.keyboard-line:nth-child(3) .key:nth-child(2) {
+  font-size: small;
+  width: 4rem;
+}
+
+.keyboard-line:nth-child(3) .key:nth-last-child(1) {
+  font-size: small;
+  width: 4rem;
+}
+
+
+#key-tab {
+  width:0.1em;
+}
+
+#key-caps {
+  width:1em;
+}
+
+#key-shift {
+  width:0.1em;
+}
+
+

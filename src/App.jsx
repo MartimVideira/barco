@@ -1,0 +1,207 @@
+import { useState, useEffect } from 'react'
+import './App.css'
+
+const N_GUESSES = 6;
+const WORD_LEN = 5;
+
+const CORRECT = "PUSSY";
+
+function App() {
+  const [guessCount, setGuessCount] = useState(0)
+  const [guesses, setGuesses] = useState([""]);
+  const [isGameOver, setGameOver] = useState(false);
+  const [keys, setKeys] = useState({});
+
+  const updateKeys = (guess) => {
+    const newKeys = { ...keys };
+    const colors = evaluateWord(guess);
+    for (let i = 0; i < WORD_LEN; i++) {
+      let key = guess[i];
+      let value = colors[i];
+      if (value == "correct" || newKeys[key] == null || (newKeys[key] == "partial" && value == "correct")) {
+        newKeys[key] = value;
+      }
+    }
+    setKeys(newKeys);
+  }
+
+  const handleKey = (e) => {
+    if (guessCount >= N_GUESSES || isGameOver) {
+      return;
+    }
+    if (e.key == 'Enter') {
+      if (guesses[guessCount].length != WORD_LEN) {
+        return;
+      }
+      else {
+        updateKeys(guesses[guessCount]);
+        if (guesses[guessCount] === CORRECT) {
+          setGameOver(true);
+        }
+        setGuessCount(guessCount + 1);
+        setGuesses([...guesses, ""]);
+
+      }
+      return;
+    }
+
+    if (e.key == 'Backspace') {
+      if (guesses[guessCount].length > 0) {
+        const newGuesses = [...guesses];
+        newGuesses[guessCount] = newGuesses[guessCount].slice(0, guesses[guessCount].length - 1);
+        setGuesses(newGuesses);
+      }
+      return;
+    }
+
+    const isValidKey = (c) => "abcdefghijklmnopqrstuwvxyz".search(c) >= 0;
+
+    if (isValidKey(e.key) && guesses[guessCount].length < WORD_LEN) {
+      const newGuesses = [...guesses];
+      const guess = (newGuesses[guessCount] + e.key).toUpperCase();
+      newGuesses[guessCount] = guess;
+      setGuesses(newGuesses);
+
+    }
+
+  }
+  useEffect(() => {
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+
+  }, [guesses, guessCount, isGameOver]);
+
+  return (
+    <>
+      <h1>BarÇo Wordle</h1>
+      <div className='app'>
+        <Board guesses={guesses} guessCount={guessCount} />
+        <Keyboard keys={keys} handleKey={handleKey} />
+      </div>
+    </>
+  );
+}
+
+function Board({ guesses, guessCount }) {
+
+  const lines = [];
+  for (let i = 0; i < N_GUESSES; i++) {
+    lines.push(<Line key={i} guess={guesses[i] ?? ''} isSet={i < guessCount} />)
+  }
+  return <div className='board'>
+    {lines}
+  </div>;
+
+}
+
+function evaluateWord(guess) {
+  const colors = [];
+  const chars = {};
+  for (let i = 0; i < WORD_LEN; i++) {
+    colors.push(null);
+    chars[CORRECT[i]] = (chars[CORRECT[i]] ?? 0) + 1;
+    if (guess[i] == CORRECT[i]) {
+      colors[i] = "correct";
+      chars[CORRECT[i]] = (chars[CORRECT[i]]) - 1;
+    }
+  }
+
+  for (let i = 0; i < WORD_LEN; i++) {
+    if (colors[i] != null) {
+      continue;
+    }
+    if ((chars[guess[i]] ?? 0) > 0) {
+      colors[i] = 'partial';
+      chars[guess[i]] = chars[guess[i]] - 1;
+    } else {
+      colors[i] = 'incorrect';
+    }
+  }
+  return colors;
+
+}
+
+function Cell({ char, state, reveal, delay }) {
+  let s = {
+    transition: `transform 1.5s ${delay * 100}ms, background-color 0s ${600 + delay * 120}ms`
+
+  };
+  return <div className={`cell ${state} `} reveal={reveal ? "reveal" : null} style={s}> <div>{char}</div></div>
+}
+
+function Line({ guess, isSet }) {
+  const cells = [];
+
+  let colors = [];
+  if (isSet) {
+    colors = evaluateWord(guess);
+  }
+
+  for (let i = 0; i < WORD_LEN; i++) {
+
+    cells.push(<Cell key={i} char={guess[i]} state={colors[i]} reveal={isSet} delay={i} />);
+  }
+  return <div className='line'>{cells}</div>
+}
+
+let c = 0;
+
+const Key = ({ k, colorClass, handleKey }) => {
+  let code = k;
+  let view = k;
+  if (Array.isArray(k)) {
+    code = k[0];
+    view = k[1];
+  }
+  return <div onClick={() => handleKey({ key: code })} className={'key ' + colorClass}>
+    <div>{view.toUpperCase()}</div>
+  </div>
+
+}
+
+function keyRepr(k) {
+  if (Array.isArray(k)) {
+    return k;
+  }
+  return [k, k];
+}
+
+function Keyboard({ keys, handleKey }) {
+  const keyboard = [
+    ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+    ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+    ['Enter', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ['Backspace', '⌫']]
+  ]
+
+
+  console.log(keys);
+
+  const makeKey = (t) => {
+    let repr = keyRepr(t);
+    let k = repr[0];
+
+    return <Key  k={t} colorClass={keys[k.toUpperCase()]} handleKey={handleKey} />
+  }
+
+  return <div className='keyboard'>
+    <div className='keyboard-line'>
+      <div className='fake-key' id='key-tab'></div>
+      {keyboard[0].map((k) => makeKey(k))}
+    </div>
+
+    <div className='keyboard-line'>
+      <div className='fake-key' id='key-caps'></div>
+      {keyboard[1].map((k) => makeKey(k))}
+    </div>
+
+    <div className='keyboard-line'>
+      <div className='fake-key' id='key-shift'></div>
+      {keyboard[2].map((k) => makeKey(k))}
+    </div>
+  </div>
+}
+
+
+
+
+export default App;
