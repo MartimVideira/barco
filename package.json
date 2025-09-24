@@ -2,14 +2,18 @@
   "name": "barco",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://MartimVideira.github.io/barco/",
   "type": "module",
   "scripts": {
     "dev": "vite",
+   "predeploy": "npm run build",
+   "deploy": "gh-pages -d build",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "gh-pages": "^6.3.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
