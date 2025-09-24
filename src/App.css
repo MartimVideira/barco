@@ -52,7 +52,7 @@ body{
   background-color:#3a3a3c;
 }
 .cell.partial {
-  background-color: 1px solid #b59f3b;
+  border: 1px solid #b59f3b;
 }
 
 .partial {

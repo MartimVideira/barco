@@ -158,7 +158,7 @@ function evaluateWord(guess) {
 
 function Cell({ char, state, reveal, delay }) {
   let s = {
-    transition: `transform 1.5s ${delay * 100}ms, background-color 0s ${600 + delay * 120}ms`
+    transition: `transform 1.5s ${delay * 100}ms, background-color 0s ${600 + delay * 120}ms, border-color 0s ${600 + delay * 120}ms`
 
   };
   if (state == null) {
