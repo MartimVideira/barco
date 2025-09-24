@@ -2338,4 +2338,18 @@ const WORD_LIST = [
 const WORD_SET = new Set(WORD_LIST);
 
 
-export {WORD_LIST, WORD_SET};
+async function wordOfTheDay() {
+    const date = new Date().toISOString().split('T')[0];
+    const arrybuf = (new TextEncoder()).encode(date)
+    const digest = await window.crypto.subtle.digest("SHA-256", arrybuf);
+    const hasharray = Array.from(new Uint32Array(digest))
+    const num = hasharray[0];
+    const normalized  = num / 0xffffffff;
+    console.log(normalized)
+    const word = WORD_LIST[Math.floor(normalized * WORD_LIST.length)];
+    console.log(word)
+    return word;
+}
+
+
+export { WORD_LIST, WORD_SET, wordOfTheDay };

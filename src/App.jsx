@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { WORD_LIST, WORD_SET } from './words';
+import { WORD_LIST, WORD_SET, wordOfTheDay} from './words';
 import './App.css'
 
 const N_GUESSES = 6;
-const WORD_LEN = 5;
+const WORD_LEN  = 5;
 
 const CORRECT = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)];
 function App() {
@@ -85,6 +85,7 @@ function App() {
 
   }
   useEffect(() => {
+    wordOfTheDay()
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
 
@@ -97,7 +98,7 @@ function App() {
         <Board guesses={guesses} guessCount={guessCount} won={won} isInvalid={isInvalidGuess} onAnimationEnd={onAnimationEnd} />
         <Keyboard keys={keys} handleKey={handleKey} />
       </div>
-      {animationOver ? <ShareResults guesses={guesses} won={won} /> : <></>}
+      {(isGameOver && !won) || animationOver ? <ShareResults guesses={guesses} won={won} /> : <></>}
     </>
   );
 }
@@ -125,7 +126,7 @@ function ShareResults({ guesses, won }) {
     navigator.clipboard.writeText(s)
   }
   return <div className='shareResults'>
-    <p>{won ? "VICTORY" : "DEFEAT"}</p>
+    <p>{won ? "VICTORY" : "DEFEAT word was: " + CORRECT}</p>
     <button onClick={copyResultsToClipBoard}>Share</button>
   </div>
 
