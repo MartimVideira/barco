@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
-import { WORD_LIST, WORD_SET, wordOfTheDay} from './words';
+import { WORD_SET, wordOfTheDay } from './words';
 import './App.css'
 
 const N_GUESSES = 6;
-const WORD_LEN  = 5;
+const WORD_LEN = 5;
 
-const CORRECT = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)];
+const WAIT_FOR_WORD_TIMEOUT = 5;
+
 function App() {
   const [guessCount, setGuessCount] = useState(0)
   const [guesses, setGuesses] = useState([""]);
@@ -15,9 +16,23 @@ function App() {
   const [animationOver, setAnimtionOver] = useState(false);
   const [isInvalidGuess, setInvalidGuess] = useState(false);
 
+  const [CORRECT, setCorrectWord] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      const word = await wordOfTheDay();
+      setCorrectWord(word);
+    })()
+  }, []);
+
+  const [shouldWaitForWord, setWaitingForWord] = useState(false);
+  useEffect(() => {
+    setTimeout(() => setWaitingForWord(true), 1000 * WAIT_FOR_WORD_TIMEOUT);
+  }, []);
+
   const updateKeys = (guess) => {
     const newKeys = { ...keys };
-    const colors = evaluateWord(guess);
+    const colors = evaluateWord(guess, CORRECT);
     for (let i = 0; i < WORD_LEN; i++) {
       let key = guess[i];
       let value = colors[i];
@@ -95,15 +110,16 @@ function App() {
     <>
       <h1>Barco</h1>
       <div className='app'>
-        <Board guesses={guesses} guessCount={guessCount} won={won} isInvalid={isInvalidGuess} onAnimationEnd={onAnimationEnd} />
+        <Board guesses={guesses} correct={CORRECT} guessCount={guessCount} won={won} isInvalid={isInvalidGuess} onAnimationEnd={onAnimationEnd} />
         <Keyboard keys={keys} handleKey={handleKey} />
       </div>
-      {(isGameOver && !won) || animationOver ? <ShareResults guesses={guesses} won={won} /> : <></>}
+      {(isGameOver && !won) || animationOver ? <ShareResults guesses={guesses} won={won} correct={CORRECT} /> : <></>}
+      {shouldWaitForWord && CORRECT == "" ? <p>WAITING FOR WORD...</p> : <></>}
     </>
   );
 }
 
-function ShareResults({ guesses, won }) {
+function ShareResults({ guesses, won, correct }) {
 
   const copyResultsToClipBoard = () => {
 
@@ -112,7 +128,7 @@ function ShareResults({ guesses, won }) {
       if (guess == "" || guess == null) {
         break;
       }
-      res.push(evaluateWord(guess));
+      res.push(evaluateWord(guess, correct));
     }
     let s = `Barco ${res.length}/${N_GUESSES}\n\n`;
     const emojiString = (a) => {
@@ -132,12 +148,12 @@ function ShareResults({ guesses, won }) {
 
 }
 
-function Board({ guesses, guessCount, won, isInvalid, onAnimationEnd }) {
+function Board({ guesses, guessCount, won, isInvalid, onAnimationEnd, correct }) {
 
   const lines = [];
   for (let i = 0; i < N_GUESSES; i++) {
     const isCurrentGuess = (i + 1) == guessCount;
-    lines.push(<Line onAnimationEnd={onAnimationEnd} key={i} guess={guesses[i] ?? ''} isInvalid={isInvalid && (i == guessCount)} isSet={i < guessCount} won={won && isCurrentGuess} />)
+    lines.push(<Line correct={correct} onAnimationEnd={onAnimationEnd} key={i} guess={guesses[i] ?? ''} isInvalid={isInvalid && (i == guessCount)} isSet={i < guessCount} won={won && isCurrentGuess} />)
   }
   return <div className='board'>
     {lines}
@@ -145,15 +161,15 @@ function Board({ guesses, guessCount, won, isInvalid, onAnimationEnd }) {
 
 }
 
-function evaluateWord(guess) {
+function evaluateWord(guess, correct) {
   const colors = [];
   const chars = {};
   for (let i = 0; i < WORD_LEN; i++) {
     colors.push(null);
-    chars[CORRECT[i]] = (chars[CORRECT[i]] ?? 0) + 1;
-    if (guess[i] == CORRECT[i]) {
+    chars[correct[i]] = (chars[correct[i]] ?? 0) + 1;
+    if (guess[i] == correct[i]) {
       colors[i] = "correct";
-      chars[CORRECT[i]] = (chars[CORRECT[i]]) - 1;
+      chars[correct[i]] = (chars[correct[i]]) - 1;
     }
   }
 
@@ -194,12 +210,12 @@ function Cell({ char, state, reveal, delay, won }) {
   </div>
 }
 
-function Line({ guess, isSet, won, isInvalid, onAnimationEnd }) {
+function Line({ guess, correct, isSet, won, isInvalid, onAnimationEnd }) {
   const cells = [];
 
   let colors = [];
   if (isSet) {
-    colors = evaluateWord(guess);
+    colors = evaluateWord(guess, correct);
   }
 
   let animationStyle = {}
