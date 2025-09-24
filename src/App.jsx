@@ -6,13 +6,14 @@ const N_GUESSES = 6;
 const WORD_LEN = 5;
 
 const CORRECT = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)];
-
 function App() {
   const [guessCount, setGuessCount] = useState(0)
   const [guesses, setGuesses] = useState([""]);
   const [isGameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
   const [keys, setKeys] = useState({});
+  const [animationOver, setAnimtionOver] = useState(false);
+  const [isInvalidGuess, setInvalidGuess] = useState(false);
 
   const updateKeys = (guess) => {
     const newKeys = { ...keys };
@@ -27,15 +28,24 @@ function App() {
     setKeys(newKeys);
   }
 
+  const onAnimationEnd = () => {
+    setInvalidGuess(() => false);
+    if (isGameOver) {
+      setAnimtionOver(true);
+    }
+
+  }
+
   const handleKey = (e) => {
     if (guessCount >= N_GUESSES || isGameOver) {
       return;
     }
     if (e.key == 'Enter') {
       if (guesses[guessCount].length != WORD_LEN) {
+        setInvalidGuess(p => !p);
         return;
       }
-      else {
+      if (WORD_SET.has(guesses[guessCount])) {
         updateKeys(guesses[guessCount]);
         if (guesses[guessCount] === CORRECT) {
           setWon(true);
@@ -47,6 +57,9 @@ function App() {
         setGuessCount(guessCount + 1);
         setGuesses([...guesses, ""]);
 
+      }
+      else {
+        setInvalidGuess(p => !p);
       }
       return;
     }
@@ -81,10 +94,10 @@ function App() {
     <>
       <h1>Barco</h1>
       <div className='app'>
-        <Board guesses={guesses} guessCount={guessCount} won={won} />
+        <Board guesses={guesses} guessCount={guessCount} won={won} isInvalid={isInvalidGuess} onAnimationEnd={onAnimationEnd} />
         <Keyboard keys={keys} handleKey={handleKey} />
       </div>
-      {isGameOver ? <ShareResults guesses={guesses} won={won} /> : <></>}
+      {animationOver ? <ShareResults guesses={guesses} won={won} /> : <></>}
     </>
   );
 }
@@ -118,11 +131,12 @@ function ShareResults({ guesses, won }) {
 
 }
 
-function Board({ guesses, guessCount, won }) {
+function Board({ guesses, guessCount, won, isInvalid, onAnimationEnd }) {
 
   const lines = [];
   for (let i = 0; i < N_GUESSES; i++) {
-    lines.push(<Line key={i} guess={guesses[i] ?? ''} isSet={i < guessCount} won={won && ((i+1) == guessCount)} />)
+    const isCurrentGuess = (i + 1) == guessCount;
+    lines.push(<Line onAnimationEnd={onAnimationEnd} key={i} guess={guesses[i] ?? ''} isInvalid={isInvalid && (i == guessCount)} isSet={i < guessCount} won={won && isCurrentGuess} />)
   }
   return <div className='board'>
     {lines}
@@ -163,7 +177,7 @@ function Cell({ char, state, reveal, delay, won }) {
     transition: `transform 1.5s ${delay * 100}ms, background-color 0s ${600 + delay * 120}ms, border-color 0s ${600 + delay * 120}ms`,
 
   };
-  let s1 ={}
+  let s1 = {}
   if (reveal && won) {
 
     s.animation = `500ms ease-out ${flipEnd + 120 * delay}ms bounce`
@@ -174,12 +188,12 @@ function Cell({ char, state, reveal, delay, won }) {
     state = "empty";
   }
 
-  return <div className={`cell ${state} `} won={won} reveal={reveal ? "reveal" : null} style={s}> 
-      <div className={ char != null? "pop-letter" :"" } style={s1}>{char}</div>
+  return <div className={`cell ${state} `} won={won} reveal={reveal ? "reveal" : null} style={s}>
+    <div className={char != null ? "pop-letter" : ""} style={s1}>{char}</div>
   </div>
 }
 
-function Line({ guess, isSet , won}) {
+function Line({ guess, isSet, won, isInvalid, onAnimationEnd }) {
   const cells = [];
 
   let colors = [];
@@ -187,11 +201,16 @@ function Line({ guess, isSet , won}) {
     colors = evaluateWord(guess);
   }
 
+  let animationStyle = {}
+  if (isInvalid) {
+    animationStyle.animation = `bounce-x 50ms ease-out 3 alternate forwards`
+  }
+
   for (let i = 0; i < WORD_LEN; i++) {
 
-    cells.push(<Cell key={i} char={guess[i]} state={colors[i]} reveal={isSet} delay={i} won={won}/>);
+    cells.push(<Cell key={i} char={guess[i]} state={colors[i]} reveal={isSet} delay={i} won={won} />);
   }
-  return <div className='line'>{cells}</div>
+  return <div onAnimationEnd={onAnimationEnd} className='line' style={animationStyle}>{cells}</div>
 }
 
 
