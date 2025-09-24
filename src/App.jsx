@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
-const N_GUESSES = 6;
+const N_GUESSES =6;
 const WORD_LEN = 5;
 
 const CORRECT = "PUSSY";
@@ -10,6 +10,7 @@ function App() {
   const [guessCount, setGuessCount] = useState(0)
   const [guesses, setGuesses] = useState([""]);
   const [isGameOver, setGameOver] = useState(false);
+  const [won, setWon] = useState(false);
   const [keys, setKeys] = useState({});
 
   const updateKeys = (guess) => {
@@ -36,6 +37,10 @@ function App() {
       else {
         updateKeys(guesses[guessCount]);
         if (guesses[guessCount] === CORRECT) {
+          setWon(true);
+          setGameOver(true);
+        }
+        if (guessCount + 1 >= N_GUESSES) {
           setGameOver(true);
         }
         setGuessCount(guessCount + 1);
@@ -73,20 +78,50 @@ function App() {
 
   return (
     <>
-      <h1>BarÇo Wordle</h1>
+      <h1>Barco</h1>
       <div className='app'>
-        <Board guesses={guesses} guessCount={guessCount} />
+        <Board guesses={guesses} guessCount={guessCount} won={won} />
         <Keyboard keys={keys} handleKey={handleKey} />
       </div>
+      {isGameOver ? <ShareResults guesses={guesses} won={won} /> : <></>}
     </>
   );
 }
 
-function Board({ guesses, guessCount }) {
+function ShareResults({ guesses, won }) {
+
+  const copyResultsToClipBoard = () => {
+    
+    const res = [];
+    for (const guess of guesses){
+      if (guess == "" || guess == null){
+        break;
+      }
+      res.push(evaluateWord(guess));
+    }
+    let s = `Barco ${res.length}/${N_GUESSES}\n\n`;
+    const emojiString = (a) => {
+      let m = {"correct":"🟩","incorrect":"⬛","partial":"🟨"}
+      return a.map((w) => m[w]).join("")
+    }
+    res.forEach((e) => {
+      s = s + emojiString(e) + "\n";
+    })
+    
+    navigator.clipboard.writeText(s)
+  }
+  return <div className='shareResults'>
+    <p>{won ? "VICTORY" : "DEFEAT"}</p>
+    <button onClick={copyResultsToClipBoard}>Share</button>
+  </div>
+
+}
+
+function Board({ guesses, guessCount, won }) {
 
   const lines = [];
   for (let i = 0; i < N_GUESSES; i++) {
-    lines.push(<Line key={i} guess={guesses[i] ?? ''} isSet={i < guessCount} />)
+    lines.push(<Line key={i} guess={guesses[i] ?? ''} isSet={i < guessCount} won={won} />)
   }
   return <div className='board'>
     {lines}
@@ -126,6 +161,9 @@ function Cell({ char, state, reveal, delay }) {
     transition: `transform 1.5s ${delay * 100}ms, background-color 0s ${600 + delay * 120}ms`
 
   };
+  if (state == null) {
+    state = "empty";
+  }
   return <div className={`cell ${state} `} reveal={reveal ? "reveal" : null} style={s}> <div>{char}</div></div>
 }
 
@@ -144,26 +182,25 @@ function Line({ guess, isSet }) {
   return <div className='line'>{cells}</div>
 }
 
-let c = 0;
 
-const Key = ({ k, colorClass, handleKey }) => {
+function keyFromk(k) {
+  if (Array.isArray(k)) {
+    return k[0]
+  }
+  return k;
+}
+
+
+const Key = ({ k, keys, handleKey }) => {
   let code = k;
   let view = k;
   if (Array.isArray(k)) {
     code = k[0];
     view = k[1];
   }
-  return <div onClick={() => handleKey({ key: code })} className={'key ' + colorClass}>
+  return <div onClick={() => handleKey({ key: code })} className={'key ' + keys[code.toUpperCase()]}>
     <div>{view.toUpperCase()}</div>
   </div>
-
-}
-
-function keyRepr(k) {
-  if (Array.isArray(k)) {
-    return k;
-  }
-  return [k, k];
 }
 
 function Keyboard({ keys, handleKey }) {
@@ -174,29 +211,21 @@ function Keyboard({ keys, handleKey }) {
   ]
 
 
-  console.log(keys);
-
-  const makeKey = (t) => {
-    let repr = keyRepr(t);
-    let k = repr[0];
-
-    return <Key  k={t} colorClass={keys[k.toUpperCase()]} handleKey={handleKey} />
-  }
 
   return <div className='keyboard'>
     <div className='keyboard-line'>
       <div className='fake-key' id='key-tab'></div>
-      {keyboard[0].map((k) => makeKey(k))}
+      {keyboard[0].map((k) => <Key handleKey={handleKey} key={keyFromk(k)} k={k} keys={keys} />)}
     </div>
 
     <div className='keyboard-line'>
       <div className='fake-key' id='key-caps'></div>
-      {keyboard[1].map((k) => makeKey(k))}
+      {keyboard[1].map((k) => <Key handleKey={handleKey} key={keyFromk(k)} k={k} keys={keys} />)}
     </div>
 
     <div className='keyboard-line'>
       <div className='fake-key' id='key-shift'></div>
-      {keyboard[2].map((k) => makeKey(k))}
+      {keyboard[2].map((k) => <Key handleKey={handleKey} key={keyFromk(k)} k={k} keys={keys} />)}
     </div>
   </div>
 }

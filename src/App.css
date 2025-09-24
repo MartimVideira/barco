@@ -1,3 +1,13 @@
+h1 {
+  text-align: center;
+}
+body{
+  background-color: #121213;
+  color: #f8f8f8;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-weight: bold;
+  font-size:1.5em;
+}
 .app{
   display: flex;
   flex-direction: column;
@@ -5,16 +15,18 @@
   gap:1em;
 }
 .cell {
-  width: 3em;
-  height: 3em;
-  border: 1px solid black;
+  width: 3rem;
+  height: 3rem;
   text-align: center;
-  font-size: medium;
   font-weight: bold;
   display:flex;
   align-items: center;
   justify-content: center;
 
+}
+
+.cell.empty {
+  border: 1px solid grey;
 }
 
 .cell[reveal] {
@@ -26,16 +38,25 @@
   transform: rotateY(-180deg);
 }
 
+.cell.correct {
+  border: 1px solid #538d4e;
+}
 .correct , .key.correct {
-  background-color: green;
+  background-color: #538d4e ;
+}
+.cell.incorrect {
+  border:1px solid #3a3a3c;
 }
 
 .incorrect {
-  background-color:grey;
+  background-color:#3a3a3c;
+}
+.cell.partial {
+  background-color: 1px solid #b59f3b;
 }
 
 .partial {
-  background-color: yellow;
+  background-color: #b59f3b;
 }
 
 .board{
@@ -73,7 +94,7 @@
 
 
 .key.undefined {
-  background-color: lightgrey;
+  background-color: #818384;
 }
 
 .keyboard-line:nth-child(3) .key:nth-child(2) {
@@ -100,3 +121,16 @@
 }
 
 
+.shareResults{
+  display: flex;
+  justify-content: center;
+  gap:1em;
+}
+
+.shareResults button {
+   cursor: pointer;
+   width : 4em;
+   height: 3em;
+   align-self: center;
+   border-radius: 10px;
+}
