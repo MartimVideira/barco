@@ -133,15 +133,15 @@ body {
 
 
 #key-tab {
-  width: 0.1em;
+  width: 0.0em;
 }
 
 #key-caps {
-  width: 1em;
+  width: 0.8em;
 }
 
 #key-shift {
-  width: 0.1em;
+  width: 0.2em;
 }
 
 
@@ -197,28 +197,31 @@ body {
 
 
 @media screen and (width <=80rem) {
-  .h1 {
-    font-size: small;
-  }
   .app {
-    gap:10px;
+    gap: 10px;
   }
+
   .body {
     font-size: 1em;
   }
 
+  .keyboard {
+    font-size: 15px;
+  }
+
   .key {
-    width: 1.5rem;
-    padding: 10px;
+    width: 1.5em;
     height: 2rem;
   }
 
-  .keyboard-line:nth-child(3) .key:nth-child(2),
-  .keyboard-line:nth-child(3) .key:nth-last-child(1) {
-    padding-left: 0px;
-    padding-right: 0px;
-  }
 
+  .keyboard-line:nth-child(3) .key:nth-child(2){
+    width: 4em;
+    font-size: 10px;
+  }
+  .keyboard-line:nth-child(3) .key:nth-last-child(1) {
+    width:2rem;
+  }
 
 
 }
