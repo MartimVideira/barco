@@ -293,7 +293,6 @@ function Keyboard({ keys, handleKey }) {
 
   return <div className='keyboard'>
     <div className='keyboard-line'>
-      <div className='fake-key' id='key-tab'></div>
       {keyboard[0].map((k) => <Key handleKey={handleKey} key={keyFromk(k)} k={k} keys={keys} />)}
     </div>
 
@@ -303,7 +302,6 @@ function Keyboard({ keys, handleKey }) {
     </div>
 
     <div className='keyboard-line'>
-      <div className='fake-key' id='key-shift'></div>
       {keyboard[2].map((k) => <Key handleKey={handleKey} key={keyFromk(k)} k={k} keys={keys} />)}
     </div>
   </div>

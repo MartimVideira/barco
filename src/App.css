@@ -121,7 +121,7 @@ body {
   background-color: #818384;
 }
 
-.keyboard-line:nth-child(3) .key:nth-child(2) {
+.keyboard-line:nth-child(3) .key:nth-child(1) {
   font-size: small;
   width: 4rem;
 }
@@ -206,7 +206,7 @@ body {
   }
 
   .keyboard {
-    font-size: 15px;
+    font-size: 20px;
   }
 
   .key {
@@ -215,12 +215,12 @@ body {
   }
 
 
-  .keyboard-line:nth-child(3) .key:nth-child(2){
+  .keyboard-line:nth-child(3) .key:nth-child(1){
     width: 4em;
     font-size: 10px;
   }
   .keyboard-line:nth-child(3) .key:nth-last-child(1) {
-    width:2rem;
+    width:3rem;
   }
 
 
