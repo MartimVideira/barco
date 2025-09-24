@@ -139,7 +139,7 @@ function App() {
 
   return (
     <>
-      <h1>Barco</h1>
+      <h1>Barco ⛵</h1>
       <div className='app'>
         <Board guesses={guesses} correct={CORRECT} guessCount={guessCount} won={won} isInvalid={isInvalidGuess} onAnimationEnd={onAnimationEnd} />
         <Keyboard keys={keys} handleKey={handleKey} />
