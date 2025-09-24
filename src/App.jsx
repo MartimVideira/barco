@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
+import { WORD_LIST, WORD_SET } from './words';
 import './App.css'
 
 const N_GUESSES = 6;
 const WORD_LEN = 5;
 
-const CORRECT = "PUSSY";
+const CORRECT = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)];
 
 function App() {
   const [guessCount, setGuessCount] = useState(0)
