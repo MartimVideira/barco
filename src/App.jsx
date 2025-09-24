@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
-const N_GUESSES =6;
+const N_GUESSES = 6;
 const WORD_LEN = 5;
 
 const CORRECT = "PUSSY";
@@ -91,23 +91,23 @@ function App() {
 function ShareResults({ guesses, won }) {
 
   const copyResultsToClipBoard = () => {
-    
+
     const res = [];
-    for (const guess of guesses){
-      if (guess == "" || guess == null){
+    for (const guess of guesses) {
+      if (guess == "" || guess == null) {
         break;
       }
       res.push(evaluateWord(guess));
     }
     let s = `Barco ${res.length}/${N_GUESSES}\n\n`;
     const emojiString = (a) => {
-      let m = {"correct":"🟩","incorrect":"⬛","partial":"🟨"}
+      let m = { "correct": "🟩", "incorrect": "⬛", "partial": "🟨" }
       return a.map((w) => m[w]).join("")
     }
     res.forEach((e) => {
       s = s + emojiString(e) + "\n";
     })
-    
+
     navigator.clipboard.writeText(s)
   }
   return <div className='shareResults'>
@@ -121,7 +121,7 @@ function Board({ guesses, guessCount, won }) {
 
   const lines = [];
   for (let i = 0; i < N_GUESSES; i++) {
-    lines.push(<Line key={i} guess={guesses[i] ?? ''} isSet={i < guessCount} won={won} />)
+    lines.push(<Line key={i} guess={guesses[i] ?? ''} isSet={i < guessCount} won={won && ((i+1) == guessCount)} />)
   }
   return <div className='board'>
     {lines}
@@ -156,18 +156,29 @@ function evaluateWord(guess) {
 
 }
 
-function Cell({ char, state, reveal, delay }) {
+function Cell({ char, state, reveal, delay, won }) {
+  let flipEnd = 1600;
   let s = {
-    transition: `transform 1.5s ${delay * 100}ms, background-color 0s ${600 + delay * 120}ms, border-color 0s ${600 + delay * 120}ms`
+    transition: `transform 1.5s ${delay * 100}ms, background-color 0s ${600 + delay * 120}ms, border-color 0s ${600 + delay * 120}ms`,
 
   };
+  let s1 ={}
+  if (reveal && won) {
+
+    s.animation = `500ms ease-out ${flipEnd + 120 * delay}ms bounce`
+    // need to apply animation to child otherwise weird things happen (letters flip)
+    s1.animation = s.animation;
+  }
   if (state == null) {
     state = "empty";
   }
-  return <div className={`cell ${state} `} reveal={reveal ? "reveal" : null} style={s}> <div>{char}</div></div>
+
+  return <div className={`cell ${state} `} won={won} reveal={reveal ? "reveal" : null} style={s}> 
+      <div className={ char != null? "pop-letter" :"" } style={s1}>{char}</div>
+  </div>
 }
 
-function Line({ guess, isSet }) {
+function Line({ guess, isSet , won}) {
   const cells = [];
 
   let colors = [];
@@ -177,7 +188,7 @@ function Line({ guess, isSet }) {
 
   for (let i = 0; i < WORD_LEN; i++) {
 
-    cells.push(<Cell key={i} char={guess[i]} state={colors[i]} reveal={isSet} delay={i} />);
+    cells.push(<Cell key={i} char={guess[i]} state={colors[i]} reveal={isSet} delay={i} won={won}/>);
   }
   return <div className='line'>{cells}</div>
 }

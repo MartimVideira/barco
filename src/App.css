@@ -1,29 +1,33 @@
 h1 {
   text-align: center;
 }
-body{
+
+body {
   background-color: #121213;
   color: #f8f8f8;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   font-weight: bold;
-  font-size:1.5em;
+  font-size: 1.5em;
 }
-.app{
+
+.app {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap:1em;
+  gap: 1em;
 }
+
 .cell {
   width: 3rem;
   height: 3rem;
   text-align: center;
   font-weight: bold;
-  display:flex;
+  display: flex;
   align-items: center;
   justify-content: center;
 
 }
+
 
 .cell.empty {
   border: 1px solid grey;
@@ -31,6 +35,15 @@ body{
 
 .cell[reveal] {
   transform: rotateY(180deg);
+}
+
+.cell div {
+  transition: transform ease-in-out 200ms;
+  transform: scale(0);
+}
+
+.cell div.pop-letter {
+  transform: scale(1);
 }
 
 .cell[reveal] div {
@@ -41,16 +54,20 @@ body{
 .cell.correct {
   border: 1px solid #538d4e;
 }
-.correct , .key.correct {
-  background-color: #538d4e ;
+
+.correct,
+.key.correct {
+  background-color: #538d4e;
 }
+
 .cell.incorrect {
-  border:1px solid #3a3a3c;
+  border: 1px solid #3a3a3c;
 }
 
 .incorrect {
-  background-color:#3a3a3c;
+  background-color: #3a3a3c;
 }
+
 .cell.partial {
   border: 1px solid #b59f3b;
 }
@@ -59,33 +76,40 @@ body{
   background-color: #b59f3b;
 }
 
-.board{
+.board {
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
+  gap: 0.3em;
 }
-.line{ display:flex;  gap:10px;}
+
+.line {
+  display: flex;
+  gap: .3em;
+}
 
 
-.keyboard{
+
+
+.keyboard {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
+
 .keyboard-line {
   display: flex;
-  gap:4px
+  gap: 4px
 }
 
 
 .key {
   width: 3rem;
   height: 3rem;
-  border-radius:5px;
+  border-radius: 5px;
   border: 1px solid black;
   text-align: center;
   cursor: pointer;
-  display:flex;
+  display: flex;
   font-weight: bold;
   align-items: center;
   justify-content: center;
@@ -109,28 +133,45 @@ body{
 
 
 #key-tab {
-  width:0.1em;
+  width: 0.1em;
 }
 
 #key-caps {
-  width:1em;
+  width: 1em;
 }
 
 #key-shift {
-  width:0.1em;
+  width: 0.1em;
 }
 
 
-.shareResults{
+.shareResults {
   display: flex;
   justify-content: center;
-  gap:1em;
+  gap: 1em;
 }
 
 .shareResults button {
-   cursor: pointer;
-   width : 4em;
-   height: 3em;
-   align-self: center;
-   border-radius: 10px;
+  cursor: pointer;
+  width: 4em;
+  height: 3em;
+  align-self: center;
+  border-radius: 10px;
+}
+
+
+@keyframes bounce {
+  0% {
+    transform: translateY(0%);
+  }
+
+  50% {
+    transform: translateY(-10%);
+  }
+
+
+  100% {
+    transform: translateY(0%);
+  }
+
 }
