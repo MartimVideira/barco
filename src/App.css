@@ -194,3 +194,31 @@ body {
   }
 
 }
+
+
+@media screen and (width <=80rem) {
+  .h1 {
+    font-size: small;
+  }
+  .app {
+    gap:10px;
+  }
+  .body {
+    font-size: 1em;
+  }
+
+  .key {
+    width: 1.5rem;
+    padding: 10px;
+    height: 2rem;
+  }
+
+  .keyboard-line:nth-child(3) .key:nth-child(2),
+  .keyboard-line:nth-child(3) .key:nth-last-child(1) {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+
+
+}

@@ -8,5 +8,6 @@ export default defineConfig({
   plugins: [react()],
   server:{
     allowedHosts: ["barcowordle"],
-  }
+  },
+  base:"/barco/",
 })
