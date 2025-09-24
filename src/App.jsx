@@ -7,7 +7,10 @@ const WORD_LEN = 5;
 
 const WAIT_FOR_WORD_TIMEOUT = 5;
 
+const TODAY = new Date().toISOString().split('T')[0];
+
 function App() {
+  const [initialized,setInitialized] = useState(false);
   const [guessCount, setGuessCount] = useState(0)
   const [guesses, setGuesses] = useState([""]);
   const [isGameOver, setGameOver] = useState(false);
@@ -18,12 +21,40 @@ function App() {
 
   const [CORRECT, setCorrectWord] = useState("");
 
-  useEffect(() => {
-    (async () => {
-      const word = await wordOfTheDay();
-      setCorrectWord(word);
-    })()
-  }, []);
+  async function initialize() {
+    const word = await wordOfTheDay();
+    setCorrectWord(word);
+    const hasPlayed = window.localStorage.getItem(TODAY);
+    if (!hasPlayed) {
+    } else {
+      const data = JSON.parse(hasPlayed);
+      setGuessCount(data.guessCount);
+      setGuesses(data.guesses);
+      setGameOver(data.isGameOver);
+      setWon(data.won);
+      setKeys(data.keys);
+    }
+    setInitialized(true);
+  }
+
+  function storeState() {
+    if (!initialized){
+    return
+    }
+    console.log("Storing State");
+    let dump = {
+      guessCount: guessCount,
+      guesses: guesses,
+      isGameOver: isGameOver,
+      won: won,
+      keys: keys,
+    }
+    console.log(dump);
+    localStorage.setItem(TODAY, JSON.stringify(dump));
+  }
+
+  useEffect(() => {initialize()}, []);
+  useEffect(storeState, [guessCount, guesses, isGameOver, won, keys,initialized]);
 
   const [shouldWaitForWord, setWaitingForWord] = useState(false);
   useEffect(() => {
