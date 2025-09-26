@@ -19,7 +19,7 @@ export class WordProvider {
       if (Array.isArray(word)){
         this.WORD_SET.set(word[0],word[1]);
       }else{
-        this.WORD_SET.set(word[0],word[1]);
+        this.WORD_SET.set(word,word);
       }
     }
     

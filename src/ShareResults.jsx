@@ -16,9 +16,9 @@ function ShareResults({ state, language, isDaily }) {
       if (guess == "" || guess == null) {
         break;
       }
-      res.push(evaluateWord(guess, correct));
+      res.push(evaluateWord(guess, state.correct));
     }
-    let s = `Barco ${isDaily ? "Daily" : "Random"}${FLAGS[language]} ${res.length}/${N_GUESSES}\n\n`;
+    let s = `Barco ${isDaily ? "Daily" : "Random"} ${FLAGS[language]} ${res.length}/${N_GUESSES}\n`;
     const emojiString = (a) => {
       let m = { "correct": "🟩", "incorrect": "⬛", "partial": "🟨" }
       return a.map((w) => m[w]).join("")

@@ -32,7 +32,7 @@ function App() {
     gameState.correct = word;
     gameState.wordProvider = wordProvider;
     const hasPlayed = window.localStorage.getItem(TODAY+currentLang);
-    if (hasPlayed) {
+    if (isDailyMode && hasPlayed) {
       const data = JSON.parse(hasPlayed);
       gameState.guesses = data.guesses;
       gameState.guessCount = data.guessCount;
@@ -63,14 +63,11 @@ function App() {
     if (!initialized || !isDailyMode) {
       return
     }
-    console.log("Storing State");
     let dump = state;
-    console.log(dump);
     localStorage.setItem(TODAY+currentLang, JSON.stringify(dump));
   }
   function playRandomWord() {
     const word = wordProvider.randomWord();
-    console.log(word);
     setInitialState({ correct: word, wordProvider: wordProvider });
     setMode(() => false);
   }
