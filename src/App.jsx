@@ -11,20 +11,27 @@ const FLAGS = {
   PT: "🇵🇹",
 }
 
+const modeState = () => {
+  const x = window.localStorage.getItem("prefered-mode")
+  if (x == null){
+    return true;
+  }
+  return x == "daily";
+}
 const wordProviders = { ENG: new WordProvider("ENG"), PT: new WordProvider("PT") };
 function App() {
 
-  const [isDailyMode, setMode] = useState(true);
+  const [isDailyMode, setMode] = useState(modeState());
   const [initialized, setInitialized] = useState(false);
   const [initialState, setInitialState] = useState(null);
-  const [currentLang, setCurrentLang] = useState("ENG");
+  const [currentLang, setCurrentLang] = useState(window.localStorage.getItem("prefered-lang")?? "ENG");
   const wordProvider = wordProviders[currentLang];
   async function initialize() {
     const word = await wordProvider.wordOfTheDay();
     const gameState = {}
     gameState.correct = word;
     gameState.wordProvider = wordProvider;
-    const hasPlayed = window.localStorage.getItem(TODAY);
+    const hasPlayed = window.localStorage.getItem(TODAY+currentLang);
     if (hasPlayed) {
       const data = JSON.parse(hasPlayed);
       gameState.guesses = data.guesses;
@@ -38,6 +45,8 @@ function App() {
   }
 
   useEffect(() => {
+    window.localStorage.setItem("prefered-mode",isDailyMode ? "daily": "random");
+    window.localStorage.setItem("prefered-lang",currentLang);
     if (isDailyMode) {
       initialize();
     }
@@ -51,13 +60,13 @@ function App() {
   // }, []);
 
   function storeState(state) {
-    if (!initialized) {
+    if (!initialized || !isDailyMode) {
       return
     }
     console.log("Storing State");
     let dump = state;
     console.log(dump);
-    localStorage.setItem(TODAY, JSON.stringify(dump));
+    localStorage.setItem(TODAY+currentLang, JSON.stringify(dump));
   }
   function playRandomWord() {
     const word = wordProvider.randomWord();
@@ -67,7 +76,10 @@ function App() {
   }
   useEffect(() => { initialize() }, []);
 
-  const toggleLanguage = () => setCurrentLang(currentLang == "ENG" ? "PT" : "ENG");
+  const toggleLanguage = () => {
+    const next = currentLang == "ENG" ? "PT" : "ENG";
+    setCurrentLang(next);
+  };
 
   return (
     <>
@@ -77,7 +89,7 @@ function App() {
         <span>|</span>
         <div className="language" onClick={toggleLanguage}>Language: {FLAGS[currentLang]}</div>
       </div>
-      <Game initialState={initialState} language="ENG" isDaily={isDailyMode} storeState={storeState} />
+      <Game initialState={initialState} language={currentLang} isDaily={isDailyMode} storeState={storeState} />
       {!isDailyMode && <div className='my-button reset-button' onClick={playRandomWord}>🔀 NEW GAME</div>}
       {!initialized && <p>WAITING FOR WORD...</p>}
     </>

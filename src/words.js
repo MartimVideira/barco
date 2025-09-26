@@ -14,12 +14,12 @@ export class WordProvider {
       words = EnglishWords;
     }
     this.WORD_LIST = words;
-    this.WORD_SET = new Set();
+    this.WORD_SET = new Map();
     for (const word of this.WORD_LIST){
       if (Array.isArray(word)){
-        this.WORD_SET.add(word[0]);
+        this.WORD_SET.set(word[0],word[1]);
       }else{
-        this.WORD_SET.add(word);
+        this.WORD_SET.set(word[0],word[1]);
       }
     }
     

@@ -52,8 +52,12 @@ const handleKey = (oldState, e) => {
       if (guessCount + 1 >= N_GUESSES) {
         newState.isGameOver = true;
       }
+      const wordToDisplay = oldState.wordProvider.WORD_SET.get(currentGuess);
+      console.log(wordToDisplay);
+      newState = updateCurrentGuess(newState, wordToDisplay);
       newState.guessCount = oldState.guessCount + 1;
-      newState.guesses = [...oldState.guesses, ""];
+
+      newState.guesses = [...newState.guesses, ""];
     }
     return newState;
   }
