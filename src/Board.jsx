@@ -7,7 +7,6 @@ function Board({ state, onAnimationEnd }) {
   for (let i = 0; i < N_GUESSES; i++) {
     const guessCount = state.guessCount;
     const isCurrentGuess = (i + 1) == guessCount;
-    console.log(state);
     lines.push(<Line correct={state.correct} onAnimationEnd={onAnimationEnd} key={i} guess={state.guesses[i] ?? ''} isInvalid={state.isInvalid && (i == guessCount)} isSet={i < guessCount} won={state.won && isCurrentGuess} />)
   }
   return <div className='board'>

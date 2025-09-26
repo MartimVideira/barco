@@ -2338,6 +2338,10 @@ export const WORD_LIST = [
 export const WORD_SET = new Set(WORD_LIST);
 
 
+export function randomWord() {
+  const word = WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)];
+  return word;
+}
 export async function wordOfTheDay() {
   const date = new Date().toISOString().split('T')[0];
   const arrybuf = (new TextEncoder()).encode(date)
@@ -2345,9 +2349,7 @@ export async function wordOfTheDay() {
   const hasharray = Array.from(new Uint32Array(digest))
   const num = hasharray[0];
   const normalized = num / 0xffffffff;
-  console.log(normalized)
   const word = WORD_LIST[Math.floor(normalized * WORD_LIST.length)];
-  console.log(word)
   return word;
 }
 

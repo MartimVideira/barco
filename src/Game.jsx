@@ -7,52 +7,13 @@ import Keyboard from './Keyboard.jsx';
 import ShareResults from './ShareResults.jsx';
 
 
-const TODAY = new Date().toISOString().split('T')[0];
 
-
-
-function Game() {
-  const [initialized, setInitialized] = useState(false);
+function Game({ initialState, language, isDaily, storeState }) {
   const [animationOver, setAnimationOver] = useState(false);
-  const [shouldWaitForWord, setWaitingForWord] = useState(false);
-
   const [state, dispatch] = useReducer(reducer, INITIAL_GAME_STATE);
 
-
-  async function initialize() {
-    const word = await wordOfTheDay();
-    const gameState = {}
-    gameState.correct= word;
-    const hasPlayed = window.localStorage.getItem(TODAY);
-    if (!hasPlayed) {
-    } else {
-      const data = JSON.parse(hasPlayed);
-      gameState.guesses = data.guesses;
-      gameState.guessCount = data.guessCount;
-      gameState.isGameOver = data.isGameOver;
-      gameState.won = data.won;
-      gameState.keys = data.keys;
-    }
-    setInitialized(true);
-    dispatch({ type: 'INITIALIZE', payload: gameState })
-  }
-
-  function storeState() {
-    if (!initialized) {
-      return
-    }
-    console.log("Storing State");
-    let dump = state;
-    console.log(dump);
-    localStorage.setItem(TODAY, JSON.stringify(dump));
-  }
-
-  useEffect(() => { initialize() }, []);
-  useEffect(storeState, [state, initialized]);
-
-  useEffect(() => {
-    setTimeout(() => setWaitingForWord(true), 1000 * WAIT_FOR_WORD_TIMEOUT);
-  }, []);
+  useEffect(() => { setAnimationOver(false); console.log(initialState); dispatch({ type: 'INITIALIZE', payload: initialState }) }, [initialState]);
+  useEffect(() => storeState(state), [state]);
 
 
   const onAnimationEnd = () => {
@@ -74,8 +35,7 @@ function Game() {
     <div className='app'>
       <Board state={state} onAnimationEnd={onAnimationEnd} />
       <Keyboard keys={state.keys} handleKey={handleKey} />
-      {(state.isGameOver && !state.won) || animationOver ? <ShareResults state={state} /> : <></>}
-      {shouldWaitForWord && state.correct == "" ? <p>WAITING FOR WORD...</p> : <></>}
+      {((state.isGameOver && !state.won) || animationOver) && <ShareResults state={state} />}
     </div>
   );
 }

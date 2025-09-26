@@ -75,7 +75,10 @@ export const reducer = (oldState, action) => {
   switch (action.type) {
     case 'INITIALIZE':
       {
-        let newState = { ...oldState };
+        let newState = {...INITIAL_GAME_STATE};
+        console.log(action)
+        console.log("initializing")
+        console.log(action.payload)
         for (const key in action.payload) {
           newState[key] = action.payload[key];
         }
