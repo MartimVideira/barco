@@ -1,6 +1,5 @@
 
 import { useState, useEffect, useReducer } from 'react'
-import { WORD_SET, wordOfTheDay, N_GUESSES, WORD_LEN, WAIT_FOR_WORD_TIMEOUT, evaluateWord } from './words';
 import { INITIAL_GAME_STATE, reducer } from './gameReducer.js';
 import Board from './Board.jsx'
 import Keyboard from './Keyboard.jsx';
@@ -35,7 +34,7 @@ function Game({ initialState, language, isDaily, storeState }) {
     <div className='app'>
       <Board state={state} onAnimationEnd={onAnimationEnd} />
       <Keyboard keys={state.keys} handleKey={handleKey} />
-      {((state.isGameOver && !state.won) || animationOver) && <ShareResults state={state} />}
+      {((state.isGameOver && !state.won) || animationOver) && <ShareResults state={state} language={language} isDaily={isDaily}/>}
     </div>
   );
 }

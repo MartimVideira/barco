@@ -1,9 +1,10 @@
-import { WORD_SET, wordOfTheDay, N_GUESSES, WORD_LEN, WAIT_FOR_WORD_TIMEOUT, evaluateWord } from './words';
+import { N_GUESSES, WORD_LEN,evaluateWord } from './words';
 
 export const INITIAL_GAME_STATE = {
   guesses: [""],
   guessCount: 0,
   isGameOver: false,
+  wordProvider:null,
   won: false,
   keys: {},
   correct: "",
@@ -39,12 +40,12 @@ const handleKey = (oldState, e) => {
   }
   if (e.key == 'Enter') {
     let newState = { ...oldState }
-    if (currentGuess.length != WORD_LEN || (!WORD_SET.has(currentGuess))) {
+    if (currentGuess.length != WORD_LEN || (!oldState.wordProvider.WORD_SET.has(currentGuess))) {
       newState.isInvalidGuess = true;
     }
     else {
       newState.keys = updateKeys(newState.keys, newState.correct, currentGuess);
-      if (currentGuess === newState.correct) {
+      if (currentGuess === newState.correct[0]) {
         newState.won = true;
         newState.isGameOver = true;
       }

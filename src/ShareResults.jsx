@@ -1,6 +1,11 @@
 import { N_GUESSES, evaluateWord } from "./words";
 
-function ShareResults({ state }) {
+const FLAGS = {
+  ENG: "🇬🇧",
+  PT: "🇵🇹",
+}
+
+function ShareResults({ state, language, isDaily }) {
   const guesses = state.guesses;
   const won = state.won;
   const CORRECT = state.correct;
@@ -13,7 +18,7 @@ function ShareResults({ state }) {
       }
       res.push(evaluateWord(guess, correct));
     }
-    let s = `Barco ${res.length}/${N_GUESSES}\n\n`;
+    let s = `Barco ${isDaily ? "Daily" : "Random"}${FLAGS[language]} ${res.length}/${N_GUESSES}\n\n`;
     const emojiString = (a) => {
       let m = { "correct": "🟩", "incorrect": "⬛", "partial": "🟨" }
       return a.map((w) => m[w]).join("")
@@ -25,7 +30,7 @@ function ShareResults({ state }) {
     navigator.clipboard.writeText(s)
   }
   return <div className='shareResults'>
-    <p>{won ? "VICTORY" : "DEFEAT word was: " + CORRECT}</p>
+    <p>{won ? "VICTORY" : "DEFEAT word was: " + CORRECT[0]}</p>
     <button onClick={copyResultsToClipBoard}>Share</button>
   </div>
 
