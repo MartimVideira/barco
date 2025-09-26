@@ -93,7 +93,7 @@ export const reducer = (oldState, action) => {
 
     case "INVALID_GUESS_OVER": {
       let newState = { ...oldState };
-      newState.isInvalidGuess = false;
+      newState.isInvalidGuess =!oldState.isInvalidGuess;
       return newState;
     }
 
