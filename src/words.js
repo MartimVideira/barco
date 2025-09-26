@@ -1,6 +1,6 @@
 
 
-const WORD_LIST = [
+export const WORD_LIST = [
     "ABOUT",
     "OTHER",
     "WHICH",
@@ -2335,10 +2335,10 @@ const WORD_LIST = [
 ]
 
 
-const WORD_SET = new Set(WORD_LIST);
+export const WORD_SET = new Set(WORD_LIST);
 
 
-async function wordOfTheDay() {
+export async function wordOfTheDay() {
     const date = new Date().toISOString().split('T')[0];
     const arrybuf = (new TextEncoder()).encode(date)
     const digest = await window.crypto.subtle.digest("SHA-256", arrybuf);
@@ -2352,4 +2352,36 @@ async function wordOfTheDay() {
 }
 
 
-export { WORD_LIST, WORD_SET, wordOfTheDay };
+
+export function evaluateWord(guess, correct) {
+  const colors = [];
+  const chars = {};
+  for (let i = 0; i < WORD_LEN; i++) {
+    colors.push(null);
+    chars[correct[i]] = (chars[correct[i]] ?? 0) + 1;
+    if (guess[i] == correct[i]) {
+      colors[i] = "correct";
+      chars[correct[i]] = (chars[correct[i]]) - 1;
+    }
+  }
+
+  for (let i = 0; i < WORD_LEN; i++) {
+    if (colors[i] != null) {
+      continue;
+    }
+    if ((chars[guess[i]] ?? 0) > 0) {
+      colors[i] = 'partial';
+      chars[guess[i]] = chars[guess[i]] - 1;
+    } else {
+      colors[i] = 'incorrect';
+    }
+  }
+  return colors;
+
+}
+
+
+export const N_GUESSES = 6;
+export const WORD_LEN = 5;
+export const WAIT_FOR_WORD_TIMEOUT = 5;
+
