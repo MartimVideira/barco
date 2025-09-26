@@ -161,6 +161,7 @@ h1 {
 
 .setting-container {
   display: flex;
+  font-size:medium;
   justify-content: center;
   gap:1em;
   margin:10px;
