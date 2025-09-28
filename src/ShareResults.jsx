@@ -30,7 +30,7 @@ function ShareResults({ state, language, isDaily }) {
     navigator.clipboard.writeText(s)
   }
   return <div className='shareResults'>
-    <p>{won ? "VICTORY" : "DEFEAT word was: " + CORRECT[0]}</p>
+    <p>{won ? "VICTORY" : "DEFEAT word was: " + CORRECT[1]}</p>
     <button onClick={copyResultsToClipBoard}>Share</button>
   </div>
 

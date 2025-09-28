@@ -11,7 +11,7 @@ function Game({ initialState, language, isDaily, storeState }) {
   const [animationOver, setAnimationOver] = useState(false);
   const [state, dispatch] = useReducer(reducer, INITIAL_GAME_STATE);
 
-  useEffect(() => { setAnimationOver(false); console.log(initialState); dispatch({ type: 'INITIALIZE', payload: initialState }) }, [initialState]);
+  useEffect(() => { setAnimationOver(false);  dispatch({ type: 'INITIALIZE', payload: initialState }) }, [initialState]);
   useEffect(() => storeState(state), [state]);
 
 

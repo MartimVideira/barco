@@ -52,6 +52,7 @@ function App() {
     }
     else {
       playRandomWord();
+      setInitialized(true);
     }
   }, [isDailyMode, currentLang])
 
@@ -71,7 +72,6 @@ function App() {
     setInitialState({ correct: word, wordProvider: wordProvider });
     setMode(() => false);
   }
-  useEffect(() => { initialize() }, []);
 
   const toggleLanguage = () => {
     const next = currentLang == "ENG" ? "PT" : "ENG";
