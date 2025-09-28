@@ -27,7 +27,7 @@ function App() {
   const [currentLang, setCurrentLang] = useState(window.localStorage.getItem("prefered-lang")?? "ENG");
   const wordProvider = wordProviders[currentLang];
   async function initialize() {
-    const word = await wordProvider.wordOfTheDay();
+    const word = await wordProvider.wordOfTheDay(); 
     const gameState = {}
     gameState.correct = word;
     gameState.wordProvider = wordProvider;

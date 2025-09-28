@@ -10,9 +10,10 @@ export const INITIAL_GAME_STATE = {
   correct: "",
   isInvalidGuess: false,
 }
-const updateKeys = (keys, correct, guess) => {
+const updateKeys = (keys, correct, guessArray) => {
   const newKeys = { ...keys };
-  const colors = evaluateWord(guess, correct);
+  const colors = evaluateWord(guessArray, correct);
+  const guess = guessArray[0];
   for (let i = 0; i < WORD_LEN; i++) {
     let key = guess[i];
     let value = colors[i];
@@ -40,21 +41,21 @@ const handleKey = (oldState, e) => {
   }
   if (e.key == 'Enter') {
     let newState = { ...oldState }
-    if (currentGuess.length != WORD_LEN || (!oldState.wordProvider.WORD_SET.has(currentGuess))) {
+    const guessInProvider = oldState.wordProvider.WORD_SET.get(currentGuess)
+    if (currentGuess.length != WORD_LEN || (guessInProvider == null)) {
       newState.isInvalidGuess = true;
     }
     else {
-      newState.keys = updateKeys(newState.keys, newState.correct, currentGuess);
-      if (currentGuess === newState.correct[0]) {
+      const guess = [currentGuess,guessInProvider];
+      newState.keys = updateKeys(newState.keys, newState.correct,guess);
+      if (guess[0] === newState.correct[0]) {
         newState.won = true;
         newState.isGameOver = true;
       }
       if (guessCount + 1 >= N_GUESSES) {
         newState.isGameOver = true;
       }
-      const wordToDisplay = oldState.wordProvider.WORD_SET.get(currentGuess);
-      console.log(wordToDisplay);
-      newState = updateCurrentGuess(newState, wordToDisplay);
+      newState = updateCurrentGuess(newState,guess);
       newState.guessCount = oldState.guessCount + 1;
 
       newState.guesses = [...newState.guesses, ""];
@@ -86,13 +87,6 @@ export const reducer = (oldState, action) => {
         }
         return newState;
       }
-
-    case "UPDATE_KEYS": {
-      let newState = { ...oldState };
-      newState.keys = updateKeys(newState.keys, newState.correct, action.payload)
-      return newState;
-    }
-
     case "INVALID_GUESS_OVER": {
       let newState = { ...oldState };
       newState.isInvalidGuess =!oldState.isInvalidGuess;

@@ -52,9 +52,10 @@ export class WordProvider {
 
 
 
-export function evaluateWord(guess,corretWord) {
+export function evaluateWord(guessArray,corretWord) {
   const colors = [];
   const chars = {};
+  const guess = guessArray[0];
   const correct = corretWord[0];
   for (let i = 0; i < WORD_LEN; i++) {
     colors.push(null);

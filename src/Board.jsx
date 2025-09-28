@@ -40,7 +40,9 @@ function Cell({ char, state, reveal, delay, won }) {
 
 function Line({ guess, correct, isSet, won, isInvalid, onAnimationEnd }) {
   const cells = [];
-
+  if (!Array.isArray(guess)){
+      guess = [guess,guess];
+  }
   let colors = [];
   if (isSet) {
     colors = evaluateWord(guess, correct);
@@ -53,7 +55,7 @@ function Line({ guess, correct, isSet, won, isInvalid, onAnimationEnd }) {
 
   for (let i = 0; i < WORD_LEN; i++) {
 
-    cells.push(<Cell key={i} char={guess[i]} state={colors[i]} reveal={isSet} delay={i} won={won} />);
+    cells.push(<Cell key={i} char={guess[1][i]} state={colors[i]} reveal={isSet} delay={i} won={won} />);
   }
   return <div onAnimationEnd={onAnimationEnd} className='line' style={animationStyle}>{cells}</div>
 }
